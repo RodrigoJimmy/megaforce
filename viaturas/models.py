@@ -11,13 +11,17 @@ class Marca(models.Model):
         unique=True,
         help_text="Marca ou fabricante (ex.: Ford, GM, Volkswagen, ...)")
 
+    def save(self, *args, **kwargs):
+        self.nome = self.nome.capitalize()
+        super(Marca, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.nome
+
     class Meta:
         verbose_name = "Marca"
         verbose_name_plural = "Marcas"
         ordering = ["nome"]
-
-    def __str__(self):
-        return self.nome
 
 
 class Modelo(models.Model):
@@ -45,7 +49,12 @@ class Modelo(models.Model):
         blank=True)
 
     updated_at = models.DateTimeField(
-        auto_now=True)
+        auto_now=True,
+        verbose_name="Atualizado em")
+
+    def save(self, *args, **kwargs):
+        self.nome = self.nome.capitalize()
+        super(Modelo, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.nome
@@ -90,7 +99,8 @@ class Viatura(models.Model):
         blank=True)
 
     updated_at = models.DateTimeField(
-        auto_now=True)
+        auto_now=True,
+        verbose_name="Atualizada em")
 
     def get_absolute_url(self):
         """
@@ -98,8 +108,12 @@ class Viatura(models.Model):
         """
         return reverse('viatura-detalhes', args=[str(self.id)])
 
-    class Meta:
-        ordering = ["prefixo"]
+    def save(self, *args, **kwargs):
+        self.placa = self.placa.upper()
+        super(Viatura, self).save(*args, **kwargs)
 
     def __str__(self):
         return "{} - {}".format(self.prefixo, self.modelo)
+
+    class Meta:
+        ordering = ["prefixo"]
